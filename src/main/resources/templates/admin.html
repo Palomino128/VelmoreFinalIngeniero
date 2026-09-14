@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin – VELMORE</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js"></script>
+</head>
+<body>
+<header>
+  <div class="logo">VELMORE</div>
+  <nav>
+    <a href="/">Inicio</a>
+    <a href="/catalogo">Catálogo</a><a href="/carrito">Carrito</a>
+    <a href="/admin">Admin</a>
+    <a href="/logout">Salir</a>
+  </nav>
+</header>
+<main>
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi"><small>Productos</small><strong th:text="${totalProductos}">0</strong></div>
+    <div class="kpi"><small>Categorías</small><strong th:text="${totalCategorias}">0</strong></div>
+    <div class="kpi"><small>Valor inventario</small>
+      <strong th:text="${'S/ ' + #numbers.formatDecimal(valorInventario,1,2)}">S/ 0</strong>
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+  <!-- Formulario: registrar nuevo producto -->
+  <section class="panel">
+    <h1>Registrar nuevo producto</h1>
+    
+    <a href="/reporte/seguridad" class="btn btn-warning" style="margin-left: 10px;">
+    Descargar Reporte de Seguridad (Excel)
+    </a>
+    
+    <a class="btn alt" href="/reporte/productos">⬇ Descargar reporte Excel</a>
+    <form method="post" action="/admin/productos" style="margin-top:16px">
+      <label>Nombre</label>
+      <input name="nombre" th:value="${productoNuevo?.nombre}" required>
+      <label>Marca</label>
+      <input name="marca" th:value="${productoNuevo?.marca}" required>
+      <label>Categoría</label>
+      <select name="categoria">
+        <option th:each="c : ${categorias}" th:value="${c}" th:text="${c.etiqueta}"></option>
+      </select>
+      <label>Precio (S/)</label>
+      <input name="precio" type="number" step="0.01" min="0.01" th:value="${productoNuevo?.precio}" required>
+      <label>Stock</label>
+      <input name="stock" type="number" min="0" th:value="${productoNuevo?.stock}" required>
+      <label>Descripción</label>
+      <textarea name="descripcion" maxlength="300" th:text="${productoNuevo?.descripcion}"></textarea>
+      <input type="hidden" name="imagen" value="nuevo"><button class="btn">Registrar producto</button>
+    </form>
+  </section>
+
+  <!-- Tabla de productos -->
+  <section class="panel" style="margin-top:18px">
+    <h2>Productos registrados</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Producto</th>
+          <th>Marca</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="p : ${productos}">
+          <td th:text="${p.id}"></td>
+          <td th:text="${p.nombre}"></td>
+          <td th:text="${p.marca}"></td>
+          <td th:text="${p.categoria.etiqueta}"></td>
+          <td th:text="${'S/ ' + p.precio}"></td>
+          <td th:text="${p.stock}"></td>
+          <td style="display:flex;gap:6px;flex-wrap:wrap;">
+            <a class="btn" th:href="@{/admin/productos/{id}/editar(id=${p.id})}">Editar</a>
+            <form th:action="@{/admin/productos/{id}/eliminar(id=${p.id})}"
+                  method="post"
+                  onsubmit="return confirmarEliminacion()">
+              <button class="btn danger">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+</body>
+</html>

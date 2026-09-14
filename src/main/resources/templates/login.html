@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>VELMORE - Login</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header><div class="logo">VELMORE</div><nav><a href="/">Inicio</a><a href="/catalogo">Catálogo</a><a href="/carrito">Carrito</a><a href="/login">Login</a><a href="/admin">Admin</a><a href="/logout">Salir</a></nav></header>
+<main>
+    <section class="panel login-panel">
+        <span class="badge">Ingreso único</span>
+        <h1>Iniciar sesión</h1>
+        <p class="sub">Desde un solo login el sistema identifica si ingresa un cliente o un administrador.</p>
+
+        <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+        <form method="post" action="/login">
+            <label>Usuario</label>
+            <input name="usuario" placeholder="admin o cliente">
+
+            <label>Contraseña</label>
+            <input name="clave" type="password" placeholder="Contraseña">
+
+            <button class="btn">Ingresar</button>
+        </form>
+
+        <div class="grid" style="margin-top:18px">
+            <div class="card">
+                <h3>Cliente</h3>
+                <p class="sub">Ingresa a su perfil, catálogo y pedido por WhatsApp.</p>
+                <p><strong>Usuario:</strong> cliente</p>
+                <p><strong>Clave:</strong> cliente123</p>
+            </div>
+            <div class="card">
+                <h3>Administrador</h3>
+                <p class="sub">Ingresa al panel administrativo para gestionar productos.</p>
+                <p><strong>Usuario:</strong> admin</p>
+                <p><strong>Clave:</strong> Velmore2024$</p>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

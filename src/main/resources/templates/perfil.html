@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>VELMORE - Perfil Cliente</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header><div class="logo">VELMORE</div><nav><a href="/">Inicio</a><a href="/catalogo">Catálogo</a><a href="/carrito">Carrito</a><a href="/login">Login</a><a href="/admin">Admin</a><a href="/logout">Salir</a></nav></header>
+<main>
+    <section class="hero">
+        <div>
+            <span class="badge">Perfil del cliente</span>
+            <h1>Bienvenido, <span th:text="${usuario.nombre}">Cliente VELMORE</span></h1>
+            <p class="sub">Desde este perfil puedes revisar el catálogo, escoger uno o varios perfumes y contactar directamente por WhatsApp.</p>
+            <a class="btn" href="/catalogo">Ver catálogo</a>
+            <a class="btn alt" href="/carrito">Hacer pedido por WhatsApp</a>
+        </div>
+        <div class="panel">
+            <h3>Datos del perfil</h3>
+            <p><strong>Usuario:</strong> <span th:text="${usuario.usuario}">cliente</span></p>
+            <p><strong>Rol:</strong> <span th:text="${usuario.rol}">CLIENTE</span></p>
+            <p><strong>Estado:</strong> sesión activa</p>
+        </div>
+    </section>
+
+    <h2>Productos recomendados</h2>
+    <div class="grid">
+        <div class="card" th:each="p:${productos}">
+            <img class="product-img" th:src="@{/img/productos/{img}.png(img=${p.imagen})}" th:alt="${p.nombre}">
+            <h3 th:text="${p.nombre}">Producto</h3>
+            <p class="sub" th:text="${p.marca + ' · ' + p.categoria.etiqueta}">Marca</p>
+            <div class="price" th:text="${'S/ ' + p.precio}">S/ 0</div>
+            <a class="btn" th:href="@{/producto/{id}(id=${p.id})}">Ver detalle</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

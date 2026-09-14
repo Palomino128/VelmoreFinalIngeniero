@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>VELMORE – Catálogo de perfumes</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header>
+  <div class="logo">VELMORE</div>
+  <nav>
+    <a href="/">Inicio</a>
+    <a href="/catalogo">Catálogo</a><a href="/carrito">Carrito</a>
+    <a href="/login">Login</a>
+    <a href="/admin">Admin</a>
+    <a href="/logout">Salir</a>
+  </nav>
+</header>
+<main>
+  <section class="hero">
+    <div>
+      <span class="badge">Guava + POI + Commons + Logback</span>
+      <h1>Catálogo de perfumes VELMORE</h1>
+      <p class="sub">Sistema con librerías de apoyo para eficiencia, reportes Excel, validación de datos, logs y seguridad básica.</p>
+      <a class="btn" href="/catalogo">Ver catálogo</a>
+      <a class="btn alt" href="/login">Acceso administrador</a>
+    </div>
+    <div class="panel">
+      <h3>Resumen del inventario</h3>
+      <p><strong th:text="${totalProductos}">0</strong> productos registrados</p>
+      <p><strong th:text="${totalCategorias}">0</strong> categorías</p>
+      <p>Valor inventario:
+        <strong th:text="${'S/ ' + #numbers.formatDecimal(valorInventario,1,2)}">S/ 0</strong>
+      </p>
+    </div>
+  </section>
+
+  <h2>Productos destacados</h2>
+  <div class="grid">
+    <div class="card" th:each="p : ${productos}">
+      <img class="product-img" th:src="@{/img/productos/{img}.png(img=${p.imagen})}" th:alt="${p.nombre}">
+      <h3 th:text="${p.nombre}">Nombre</h3>
+      <p class="sub" th:text="${p.marca + ' · ' + p.categoria.etiqueta}">Marca</p>
+      <div class="price" th:text="${'S/ ' + p.precio}">S/ 0</div>
+      <a class="btn" th:href="@{/producto/{id}(id=${p.id})}">Ver detalle</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>

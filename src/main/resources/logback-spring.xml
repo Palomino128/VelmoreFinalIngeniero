@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    VELMORE — Configuración de Logging con Logback
+    ================================================
+    CAPA 1 del Plan de Monitoreo:
+    - CONSOLE  : Salida en pantalla (todos los niveles)
+    - APP_FILE : Archivo general INFO+ (rotación diaria, 7 días)
+    - WARN_FILE: Archivo de alertas WARN/ERROR (rotación diaria, 30 días)
+
+    Uso de perfiles Spring Boot:
+    - dev  → nivel DEBUG para el paquete velmore, INFO para el resto
+    - prod → nivel INFO para velmore, WARN para librerías de terceros
+-->
+<configuration>
+
+    <!-- ── Propiedades de rutas ───────────────────────────────────────────── -->
+    <property name="LOG_PATH"    value="logs"/>
+    <property name="APP_NAME"    value="velmore"/>
+    <!-- Patron enriquecido: timestamp | nivel | thread | clase corta - mensaje -->
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{40} - %msg%n"/>
+
+    <!-- ── APPENDER 1: Consola ────────────────────────────────────────────── -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Color en consola según nivel: ERROR=rojo, WARN=amarillo, INFO=verde -->
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%cyan(%thread)] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── APPENDER 2: Archivo general INFO+ (7 días) ────────────────────── -->
+    <!-- Captura todos los eventos INFO, WARN y ERROR de la aplicación -->
+    <appender name="APP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Rotación diaria: velmore-2026-06-25.log -->
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- Retención: 7 días de historial -->
+            <maxHistory>7</maxHistory>
+            <!-- Límite total del directorio de logs -->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── APPENDER 3: Archivo de alertas WARN/ERROR (30 días) ──────────── -->
+    <!-- Canal dedicado solo para problemas críticos — mayor retención       -->
+    <appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}-alertas.log</file>
+        <!-- Filtro: solo pasan eventos WARN y ERROR -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}-alertas-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- Retención extendida: 30 días para análisis post-mortem -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>200MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── APPENDER 4: Archivo de rendimiento [PERF] (7 días) ───────────── -->
+    <!-- Captura los logs del interceptor de rendimiento HTTP               -->
+    <appender name="PERF_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}-rendimiento.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}-rendimiento-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Logger dedicado para el interceptor de rendimiento ────────────── -->
+    <logger name="pe.edu.velmore.monitor.RendimientoInterceptor" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="PERF_FILE"/>
+        <appender-ref ref="WARN_FILE"/><!-- captura los [PERF SLOW] con nivel WARN -->
+    </logger>
+
+    <!-- ── Logger del paquete VELMORE: perfil DESARROLLO ────────────────── -->
+    <springProfile name="dev">
+        <logger name="pe.edu.velmore" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="APP_FILE"/>
+            <appender-ref ref="WARN_FILE"/>
+        </logger>
+        <!-- Hibernate SQL en desarrollo -->
+        <logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="APP_FILE"/>
+            <appender-ref ref="WARN_FILE"/>
+        </root>
+    </springProfile>
+
+    <!-- ── Logger del paquete VELMORE: perfil PRODUCCIÓN ─────────────────── -->
+    <springProfile name="prod">
+        <logger name="pe.edu.velmore" level="INFO" additivity="false">
+            <appender-ref ref="APP_FILE"/>
+            <appender-ref ref="WARN_FILE"/>
+        </logger>
+        <!-- Silenciar librerías de terceros en producción -->
+        <logger name="org.springframework"  level="WARN"/>
+        <logger name="org.hibernate"         level="WARN"/>
+        <logger name="com.zaxxer.hikari"     level="WARN"/>
+        <root level="WARN">
+            <appender-ref ref="APP_FILE"/>
+            <appender-ref ref="WARN_FILE"/>
+        </root>
+    </springProfile>
+
+    <!-- ── Configuración base (sin perfil activo) ────────────────────────── -->
+    <springProfile name="!dev &amp; !prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="APP_FILE"/>
+            <appender-ref ref="WARN_FILE"/>
+        </root>
+    </springProfile>
+
+</configuration>

@@ -1,0 +1,22 @@
+# Maven
+target/
+*.class
+*.jar
+
+# Logs (no subir al repositorio)
+logs/
+*.log
+
+# IDEs
+.idea/
+*.iml
+.netbeans/
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.5</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>pe.edu.velmore</groupId>
+    <artifactId>velmore-librerias-final</artifactId>
+    <version>1.0.0</version>
+    <name>VelmoreLibreriasFinalNetBeans</name>
+    <description>Proyecto VELMORE con Google Guava, Apache POI, Apache Commons y Logback</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <java.version>17</java.version>
+        <start-class>pe.edu.velmore.VelmoreLibreriasApplication</start-class>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- Spring Boot MVC Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Thymeleaf para las vistas HTML -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <!-- Google Guava: colecciones, cache y utilidades -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.2.1-jre</version>
+        </dependency>
+
+        <!-- Apache POI: exportación de reportes Excel -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.5</version>
+        </dependency>
+
+        <!-- Apache Commons Lang: validaciones y manejo seguro de textos -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.14.0</version>
+        </dependency>
+
+        <!-- Apache Commons IO: utilidades para flujos y archivos -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+
+        <!-- Spring Data JPA: persistencia con Hibernate y MySQL -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- MySQL Connector: driver JDBC para XAMPP / MySQL 8 -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Logback: registro de eventos y errores del sistema -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+
+        <!-- TDD / pruebas unitarias -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Boot Actuator: endpoints de monitoreo y salud -->
+        <!-- Uso: GET /actuator/health → {"status":"UP"} -->
+        <!-- Exponer en producción solo: health,info -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Ejecuta Spring Boot en NetBeans con Run Project -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>pe.edu.velmore.VelmoreLibreriasApplication</mainClass>
+                    <!-- Excluir Actuator del executable JAR si se quiere un JAR más ligero -->
+                    <!-- <excludes> ... </excludes> -->
+                </configuration>
+            </plugin>
+
+            <!-- Compilador Java — versión explícita para garantizar bytecode Java 17 -->
+            <!-- Esto asegura que el JAR sea compatible con servidores Java 17+ -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <compilerArgs>
+                        <!-- Mostrar advertencias de deprecación en compilación -->
+                        <arg>-Xlint:deprecation</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <!-- JaCoCo: reporte de cobertura de código por pruebas unitarias -->
+            <!-- Uso: mvn test jacoco:report → genera target/site/jacoco/index.html -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <!-- 1. Instrumenta la JVM antes de ejecutar los tests -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- 2. Genera el reporte HTML después de la fase test -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Excluir clases sin lógica de negocio para métricas más representativas -->
+                    <excludes>
+                        <exclude>pe/edu/velmore/model/**</exclude>
+                        <exclude>pe/edu/velmore/dto/**</exclude>
+                        <exclude>pe/edu/velmore/VelmoreLibreriasApplication.class</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+
+<!-- ================================================================
+  PERFILES MAVEN — Taller de Despliegue
+  Uso:
+    mvn package -Pdev   → perfil desarrollo (XAMPP local)
+    mvn package -Pprod  → perfil produccion (servidor remoto)
+================================================================ -->

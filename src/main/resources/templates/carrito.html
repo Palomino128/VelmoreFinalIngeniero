@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>VELMORE - Pedido por WhatsApp</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js"></script>
+</head>
+<body>
+<header><div class="logo">VELMORE</div><nav><a href="/">Inicio</a><a href="/catalogo">Catálogo</a><a href="/carrito">Carrito</a><a href="/login">Login</a><a href="/admin">Admin</a><a href="/logout">Salir</a></nav></header>
+<main>
+    <section class="panel">
+        <span class="badge">Pedido individual o múltiple</span>
+        <h1>Escoge uno o más productos</h1>
+        <p class="sub">El cliente puede seleccionar un perfume o varios, indicar cantidades y contactar directamente por WhatsApp.</p>
+
+        <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+        <form method="post" action="/carrito/whatsapp">
+            <label>Nombre del cliente</label>
+            <input name="nombreCliente" placeholder="Escribe tu nombre" th:value="${nombreCliente}">
+
+            <div class="grid">
+                <div class="card product-select-card" th:each="p:${productos}">
+                    <label class="select-product">
+                        <input type="checkbox" name="productoId" th:value="${p.id}">
+                        <span>Seleccionar producto</span>
+                    </label>
+
+                    <img class="product-img" th:src="@{/img/productos/{img}.png(img=${p.imagen})}" th:alt="${p.nombre}">
+                    <h3 th:text="${p.nombre}">Producto</h3>
+                    <p class="sub" th:text="${p.marca + ' · ' + p.categoria.etiqueta}">Marca</p>
+                    <div class="price" th:text="${'S/ ' + p.precio}">S/ 0</div>
+
+                    <label>Cantidad</label>
+                    <input type="number" name="cantidad" value="1" min="1">
+                </div>
+            </div>
+
+            <button class="btn carrito-btn">Generar pedido por WhatsApp</button>
+        </form>
+    </section>
+
+    <section class="panel" th:if="${mensaje}" style="margin-top:18px">
+        <h2>Mensaje generado</h2>
+        <pre id="mensajeGenerado" class="message-box" th:text="${mensaje}">Mensaje</pre>
+        <button class="btn alt" onclick="copiarMensaje()">Copiar mensaje</button>
+        <a class="btn" th:href="${whatsappLink}" target="_blank">Abrir WhatsApp</a>
+    </section>
+</main>
+</body>
+</html>

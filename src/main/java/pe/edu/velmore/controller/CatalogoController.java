@@ -1,5 +1,7 @@
 package pe.edu.velmore.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,7 @@ import pe.edu.velmore.service.ProductoService;
 
 @Controller
 public class CatalogoController {
+    private static final Logger log = LoggerFactory.getLogger(CatalogoController.class);
     private final ProductoService productoService;
     private final ContactoService contactoService;
     // CAPA 3 — Métricas de negocio Micrometer
@@ -36,10 +39,21 @@ public class CatalogoController {
 
     @GetMapping("/catalogo")
     public String catalogo(@ModelAttribute BusquedaProductoDto filtro, Model model) {
+        log.info("Búsqueda de catálogo ejecutada con filtro: {}", filtro);
         metricas.registrarBusqueda(); // [MÉTRICA] velmore.busquedas.total++
         model.addAttribute("productos", productoService.buscar(filtro));
         model.addAttribute("categorias", Categoria.values());
         model.addAttribute("filtro", filtro);
+        return "catalogo";
+    }
+
+    /** feat: endpoint de productos destacados (top 6 activos) */
+    @GetMapping("/catalogo/destacados")
+    public String destacados(Model model) {
+        log.info("Cargando productos destacados");
+        model.addAttribute("productos", productoService.listarActivos().stream().limit(6).toList());
+        model.addAttribute("categorias", Categoria.values());
+        model.addAttribute("filtro", new BusquedaProductoDto());
         return "catalogo";
     }
 

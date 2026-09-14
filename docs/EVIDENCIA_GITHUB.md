@@ -1,44 +1,44 @@
-# Evidencia de uso de Git y GitHub
+# 📸 Evidencia de Control de Versiones en GitHub
 
-Para cumplir el criterio de Git y GitHub, el estudiante debe subir este proyecto a un repositorio propio y mostrar el historial de commits.
+El proyecto **VelmoreFinalIngeniero** implementa un flujo completo de control de versiones siguiendo las mejores prácticas y la estrategia **GitFlow**.
 
-## Comandos sugeridos
+## 🌐 Repositorio Remoto
+**URL:** [https://github.com/Palomino128/VelmoreFinalIngeniero](https://github.com/Palomino128/VelmoreFinalIngeniero)
 
-```bash
-git init
-git add .
-git commit -m "Inicio del proyecto VELMORE"
+## 🌿 Estructura de Ramas Creadas
 
-git branch -M main
-git remote add origin https://github.com/TU_USUARIO/velmore-proyecto.git
-git push -u origin main
-```
+Se han creado y publicado las siguientes ramas, evidenciando el dominio de GitFlow:
 
-## Commits recomendados para evidenciar el 100% del avance
+1. `main`: Rama principal de producción.
+2. `develop`: Rama de integración principal.
+3. `feature/autenticacion-mejorada`: Desarrollo de nueva funcionalidad (límites de login).
+4. `feature/mejora-catalogo`: Desarrollo paralelo para forzar y resolver un conflicto.
+5. `release/v1.0`: Rama de preparación para el pase a producción, incluye `CHANGELOG.md` y un Tag `v1.0`.
+6. `hotfix/stock-critico`: Parche urgente derivado de `main` para arreglar un problema en producción sin afectar el desarrollo actual.
 
-```bash
-git add .
-git commit -m "Agrega arquitectura MVC y DAO"
+## 🔀 Resolución de Conflictos (Merge Conflict)
 
-git add .
-git commit -m "Implementa librerías Guava Apache POI Commons y Logback"
+Se forzó intencionalmente un conflicto modificando la constante `MAX_INTENTOS_LOGIN` en `SecurityConstants.java` desde dos ramas distintas:
+- `feature/autenticacion-mejorada` la configuró en 3.
+- `feature/mejora-catalogo` la configuró en 5.
 
-git add .
-git commit -m "Agrega seguridad con login sesión e interceptor"
+**Resolución:** Durante el merge hacia `develop`, Git detectó el conflicto. Se resolvió manualmente editando el archivo, conservando la política más estricta (`3`) y fusionando el resto de constantes, demostrando capacidad de resolución manual de código.
 
-git add .
-git commit -m "Mejora UI UX y cubre alcance funcional"
+## 🤝 Colaboración y Pull Requests
 
-git add .
-git commit -m "Agrega documentación final y evidencia de rúbrica"
-```
+Se generaron múltiples **Pull Requests (PRs)** en GitHub para evidenciar el flujo colaborativo y de revisión de código antes de integrar a `main`:
 
-## Qué debe mostrar al docente
+- **PR #1:** `feature/mi-funcion` → `main` (Mergeado exitosamente)
+- **PR #2:** `release/v1.0` → `main` (Preparación de Release v1.0)
+- **PR #3:** `hotfix/stock-critico` → `main` (Integración de parche de emergencia)
 
-1. Repositorio en GitHub.
-2. Carpeta `src/main/java` con el código.
-3. `pom.xml` con las librerías.
-4. Historial de commits.
-5. README del proyecto.
-6. Evidencia de que el código de NetBeans es el mismo que está en GitHub.
-# avance
+Todos los PRs incluyen una descripción detallada (`body`) con el propósito, cambios y checklist de revisión.
+
+## 📚 Documentación Técnica
+
+El repositorio incluye la documentación teórica y práctica exigida:
+- `docs/GIT_INTRODUCCION.md`: Conceptos y principios básicos de SCV.
+- `docs/GIT_COMANDOS.md`: Guía de instalación, configuración, comandos y flujo usado.
+
+---
+*Documento generado para evidenciar el cumplimiento de la rúbrica de Control de Versiones.*
